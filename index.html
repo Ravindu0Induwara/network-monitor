@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Network Monitor</title><link rel="apple-touch-icon" href="icon-180.png"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" href="icon-192.png"><meta name="apple-mobile-web-app-title" content="Net Monitor"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#3b6cff">
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--tx:#141a26;--mu:#6b7589;--bd:#e3e7ef;--ac:#3b6cff;--g:#16a34a;--y:#d9a006;--r:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e121a;--card:#171d29;--tx:#eef1f7;--mu:#8b95aa;--bd:#262e3d;--ac:#6c8cff;--g:#34d27b;--y:#f2c230;--r:#ff5d5d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e121a;--card:#171d29;--tx:#eef1f7;--mu:#8b95aa;--bd:#262e3d;--ac:#6c8cff;--g:#34d27b;--y:#f2c230;--r:#ff5d5d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px;display:grid;gap:12px}
+h1{font-size:20px;margin:4px 0 0;display:flex;justify-content:space-between;align-items:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px}
+.lbl{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}.big small{font-size:14px;font-weight:500;color:var(--mu)}
+button,select,input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 12px}
+button.p{background:var(--ac);color:#fff;border:0;font-weight:600;width:100%;padding:12px}
+.cov{display:flex;align-items:center;gap:14px}.num{font-size:52px;font-weight:800;line-height:1;transition:color .4s}
+.bar{height:8px;border-radius:8px;background:var(--bd);overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;width:0;transition:width .5s,background .4s}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.chip{font-size:12px;padding:4px 9px;border-radius:20px;border:1px solid var(--bd);color:var(--mu)}.chip.ok{color:var(--g);border-color:var(--g)}.chip.best{background:var(--g);color:#fff;border-color:var(--g)}
+table{width:100%;border-collapse:collapse;font-size:13px}td{padding:5px 0;border-bottom:1px solid var(--bd)}td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+svg{width:100%;height:90px;display:block}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.scroll{overflow-x:auto}
+:root{--ac2:#8b5cf6;--sh:0 1px 2px rgba(16,24,40,.04),0 10px 30px rgba(16,24,40,.07)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ac2:#a78bfa;--sh:0 10px 30px rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--ac2:#a78bfa;--sh:0 10px 30px rgba(0,0,0,.35)}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;background:radial-gradient(900px 500px at 10% -10%,color-mix(in srgb,var(--ac) 22%,transparent),transparent),radial-gradient(700px 420px at 100% 0,color-mix(in srgb,var(--ac2) 16%,transparent),transparent),var(--bg);background-attachment:fixed}
+main{gap:14px;padding:18px 16px 36px}
+h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+#st{display:inline-flex;align-items:center;padding:6px 12px;border-radius:99px;background:var(--card);border:1px solid var(--bd);font-size:12px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--tx);box-shadow:var(--sh)}
+.dot{animation:pl 1.8s ease-in-out infinite}@keyframes pl{50%{opacity:.3}}
+.card{border-radius:22px;padding:18px;box-shadow:var(--sh);background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(10px)}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em}
+.big{font-size:34px;font-weight:800;letter-spacing:-.03em;margin-top:6px}
+.row .card:first-child .big{color:var(--ac)}.row .card:nth-child(2) .big{color:var(--ac2)}
+.cov{gap:18px}.bar{display:none}#covt{font-size:18px;line-height:1.3}
+.num{position:relative;isolation:isolate;flex:none;width:108px;height:108px;border-radius:50%;display:grid;place-items:center;font-size:34px;letter-spacing:-.03em;background:conic-gradient(var(--c,var(--bd)) calc(var(--p,0)*1%),var(--bd) 0)}
+.num::before{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--card);z-index:-1}
+button{cursor:pointer;font-weight:600;border-radius:12px}
+button.p{background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:16px;padding:14px;box-shadow:0 10px 24px color-mix(in srgb,var(--ac) 35%,transparent);transition:transform .15s}
+button.p:active{transform:scale(.98)}
+#vq{font-size:38px}.chips{gap:7px}.chip{padding:5px 12px;font-weight:600}
+.chip.best{background:linear-gradient(135deg,var(--g),#22c1a0);box-shadow:0 4px 12px color-mix(in srgb,var(--g) 40%,transparent)}
+td{padding:10px 0;border-bottom:1px solid var(--bd)}tr:last-child td{border-bottom:0}td:first-child{color:var(--mu)}
+input,select{background:var(--bg);font-size:16px}#et{color:var(--ac);font-size:18px}
+svg#gr{height:110px;margin-top:6px}
+@property --p{syntax:"<number>";inherits:false;initial-value:0}
+@property --c{syntax:"<color>";inherits:false;initial-value:#8b95aa}
+.num{transition:--p .9s cubic-bezier(.22,.8,.3,1),--c .6s,color .6s}
+.big,.num,#pg{font-variant-numeric:tabular-nums}
+.num{padding-bottom:12px}.num::after{content:"out of 100";position:absolute;bottom:24px;font-size:9px;font-weight:600;letter-spacing:.05em;color:var(--mu);text-transform:uppercase}
+#covt{font-size:20px;font-weight:800;transition:color .5s}.qd{font-size:12px;color:var(--mu);line-height:1.4;margin-top:3px}
+.scale{display:flex;gap:6px;margin-top:16px}.scale span{flex:1;text-align:center;color:#fff;font-size:12px;font-weight:700;padding:7px 0;border-radius:10px;opacity:.28;transition:opacity .4s,transform .4s}.scale span:nth-child(2){color:#2a2000}.scale span.on{opacity:1;transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.18)}.scale small{display:block;font-size:10px;font-weight:500;opacity:.85}
+.fac{margin-top:14px;display:grid;gap:9px}.f{display:grid;grid-template-columns:72px 1fr 96px;align-items:center;gap:10px;font-size:13px}.f span{color:var(--mu)}.f b{text-align:right;font-size:12px;white-space:nowrap}.fb{height:7px;border-radius:7px;background:var(--bd);overflow:hidden}.fb i{display:block;height:100%;width:0;border-radius:7px;transition:width .8s cubic-bezier(.22,.8,.3,1),background .5s}
+.gen{display:inline-flex;align-items:center;gap:3px;padding:1px 5px;border-radius:5px;background:var(--bd);color:var(--tx);font-size:9px;font-weight:700;letter-spacing:.03em}.gen svg{width:8px;height:7px}
+.credit{text-align:center;margin-top:8px;padding-top:16px;border-top:1px solid var(--bd)}.credit .cl{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mu)}.credit .cn{font-size:15px;font-weight:700;margin-top:4px}.credit .cr{font-size:12px;color:var(--mu);margin-top:2px}.credit .cc{font-size:11px;color:var(--mu);opacity:.8;margin-top:10px}
+.qs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.qv{font-size:22px;font-weight:800;margin-top:2px;letter-spacing:-.02em}.qv b{font-weight:800;transition:color .5s}
+</style></head><body><main>
+<h1>📡 Network Monitor <span class="lbl" id="st"><i class="dot" id="sd"></i><span id="stt">…</span></span></h1>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div class="lbl">Network coverage</div><span id="gen" class="gen" style="display:none"></span></div>
+<div class="cov"><div class="num" id="cov">--</div><div style="flex:1"><div id="covt" style="font-weight:800">Measuring…</div><div id="covd" class="qd">Checking your connection…</div><div class="bar"><i id="covb"></i></div></div></div>
+<div class="scale"><span style="background:var(--r)">Poor<small>0–39</small></span><span style="background:var(--y)">Moderate<small>40–69</small></span><span style="background:var(--g)">Good<small>70–100</small></span></div>
+<div class="fac"><div class="f"><span>Speed</span><div class="fb"><i id="f0"></i></div><b id="g0">--</b></div><div class="f"><span>Response</span><div class="fb"><i id="f1"></i></div><b id="g1">--</b></div><div class="f"><span>Stability</span><div class="fb"><i id="f2"></i></div><b id="g2">--</b></div></div><div class="qd" style="margin-top:12px">Response and stability are measured to a nearby public CDN server.</div></div>
+<div class="row">
+<div class="card"><div class="lbl">⬇ Download</div><div class="big" id="dl">--<small> MB/s</small></div><div class="lbl" id="dlm"></div></div>
+<div class="card"><div class="lbl">⬆ Upload</div><div class="big" id="ul">--<small> MB/s</small></div><div class="lbl" id="ulm"></div></div></div>
+<button class="p" id="go">Starting live monitoring…</button>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div class="lbl">Speed history</div><div class="lbl" id="sgm">--</div></div>
+<div style="display:flex;gap:16px;margin:8px 0 2px;font-size:13px;flex-wrap:wrap"><span><i class="dot" style="background:var(--ac);animation:none"></i>Download <b id="sgd">--</b> MB/s</span><span><i class="dot" style="background:var(--ac2);animation:none"></i>Upload <b id="sgu">--</b> MB/s</span></div>
+<svg id="sg" viewBox="0 0 300 110" preserveAspectRatio="none" style="height:130px;margin-top:6px"></svg></div>
+<div class="card"><div class="lbl">Best video streaming quality</div><div class="big" id="vq">--</div><div class="chips" id="chips"></div></div>
+<div class="card"><div class="lbl">Connection quality</div>
+<div class="qs"><div><div class="lbl">Ping</div><div class="qv"><b id="pg">--</b> ms</div><div class="qd">Response time</div></div><div><div class="lbl">Jitter</div><div class="qv"><b id="jt">--</b> ms</div><div class="qd">Steadiness</div></div><div><div class="lbl">Packet loss</div><div class="qv"><b id="ls">--</b>%</div><div class="qd">Dropped data</div></div></div></div>
+<div class="card"><div class="lbl">Download time calculator</div>
+<div style="display:flex;gap:8px;margin-top:8px"><input id="sz" type="number" value="500" min="0" style="flex:1;min-width:0"><select id="un"><option value="1">MB</option><option value="1000">GB</option></select></div>
+<div style="margin-top:8px">Estimated time: <b id="et">--</b></div></div>
+<div class="card"><div class="lbl">Connection details</div><table id="info"></table></div>
+<div class="card"><div class="lbl">Test history</div><div class="scroll"><table id="hist"></table></div>
+<div style="display:flex;gap:8px;margin-top:10px"><button id="cp" style="flex:1">Copy report</button><button id="cl" style="flex:1">Clear</button></div></div>
+<p class="lbl" style="text-align:center">Speeds are measured from your device to public CDN and hosting servers, so treat them as close estimates. Upload is approximate. Live mode retests every few seconds and uses roughly 2 MB of data per cycle, so pause it on limited mobile data.</p>
+<footer class="credit"><div class="cl">Designed &amp; developed by</div><div class="cn">Ravindu Induwara</div><div class="cr">Network Monitor · Real-time connection analytics</div><div class="cc">© 2026 Ravindu Induwara. All rights reserved.</div></footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const Q=[["144p",.3],["240p",.7],["360p",1],["480p",2.5],["720p",5],["1080p",8],["1440p",16],["4K",35]];
+let down=0,up=0,pings=[],hist=[],loss=0,jit=0,busy=false,auto=true,timer=null,off=false,fails=0,t0=Date.now(),drops=0,lastDrop="",peakD=0,peakU=0,used=0;
+try{hist=JSON.parse(localStorage.getItem("nm_h")||"[]")}catch(e){}
+const col=s=>s>=70?"var(--g)":s>=40?"var(--y)":"var(--r)";
+const mbs=x=>x>=10?x.toFixed(1):x.toFixed(2);
+function quality(){
+ const mb=down*8,ok=Q.filter(q=>mb>=q[1]*1.25),best=ok.length?ok[ok.length-1][0]:"Too slow";
+ $("vq").textContent=down?best:"--";$("vq").style.color=down?col(ok.length>=5?80:ok.length>=3?50:10):"";
+ $("chips").innerHTML=Q.map(q=>`<span class="chip ${mb>=q[1]*1.25?(q[0]==best?"best":"ok"):""}">${q[0]}</span>`).join("");
+}
+function tinyLoad(){return new Promise((res,rej)=>{const s=document.createElement("script"),k=setTimeout(()=>{s.remove();rej()},3000);s.onload=()=>{clearTimeout(k);s.remove();res()};s.onerror=()=>{clearTimeout(k);s.remove();rej()};s.src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js?p="+Math.random();document.head.appendChild(s)})}
+function base(){const a=pings.slice(-30).sort((x,y)=>x-y);return a.length?a[Math.floor(a.length*.3)]:300}
+function score(){if(off)return 0;
+ const p=base();
+ const sp=Math.min(down*8/25,1),la=Math.max(0,Math.min(1,1-(p-40)/360)),ji=Math.max(0,1-jit/120),lo=Math.max(0,1-loss/20);
+ const s=Math.round(100*(.45*sp+.3*la+.15*ji+.1*lo));
+ const el=$("cov");if(down||pings.length)tw("cov",s,"",0);else el.textContent="--";el.style.color=col(s);
+ $("covb").style.width=s+"%";$("covb").style.background=col(s);el.style.setProperty("--p",down||pings.length?s:0);el.style.setProperty("--c",col(s));
+ const lv=s>=70?2:s>=40?1:0;
+ $("covt").textContent=["Poor connection","Moderate connection","Good connection"][lv];$("covt").style.color=col(s);
+ $("covd").textContent=["Pages may load slowly and video will buffer. Try moving closer to your router or tower.","Fine for browsing and HD video. Calls and games may lag at times.","Fast and stable. Great for 4K streaming, video calls and gaming."][lv];
+ document.querySelectorAll(".scale span").forEach((e,i)=>e.classList.toggle("on",i===lv));
+ const vals=[down?mbs(down)+" MB/s":"--",pings.length?Math.round(p)+" ms":"--","±"+Math.round(jit)+" ms"+(loss>0?" · "+loss.toFixed(0)+"% loss":"")];
+ [sp,la,ji*.6+lo*.4].forEach((v,i)=>{$("f"+i).style.width=v*100+"%";$("f"+i).style.background=col(v*100);$("g"+i).textContent=vals[i]});return s;
+}
+function graphOld(){
+ const d=pings.slice(-40);if(d.length<2){$("gr").innerHTML="";return}
+ const mx=Math.max(100,...d),pts=d.map((v,i)=>`${(i/(d.length-1)*300).toFixed(1)},${(85-v/mx*80).toFixed(1)}`).join(" ");
+ $("gr").innerHTML=`<defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ac);stop-opacity:.35"/><stop offset="1" style="stop-color:var(--ac);stop-opacity:0"/></linearGradient></defs><polygon points="0,90 ${pts} 300,90" fill="url(#lg)"/><polyline points="${pts}" fill="none" stroke="var(--ac)" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+}
+async function ping(n=1){
+ let ok=0,fail=0,s=[];
+ for(let i=0;i<n;i++){const t=performance.now();
+  try{
+   await tinyLoad();
+   const v=performance.now()-t;s.push(v);pings.push(v);ok++;fails=0}catch(e){fail++;fails++}}
+ if(pings.length>60)pings=pings.slice(-60);
+ if(s.length>1){jit=s.slice(1).reduce((a,v,i)=>a+Math.abs(v-s[i]),0)/(s.length-1)}
+ loss=n>1?fail/n*100:loss;
+ const p=pings.slice(-5);if(p.length)tw("pg",p.reduce((a,b)=>a+b)/p.length,"",0);else $("pg").textContent="--";
+ $("jt").textContent=Math.round(jit);$("ls").textContent=loss.toFixed(0);graph();if(fails>=3){goOffline();return}score();
+}
+function loadScript(){return new Promise(r=>{
+ const s=document.createElement("script"),t=performance.now();
+ s.src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js?nm="+Math.random();
+ s.onload=()=>{const e=performance.getEntriesByName(s.src)[0];r({b:(e&&e.encodedBodySize)||590000,t:(e?e.responseEnd-e.startTime:performance.now()-t)/1000});s.remove()};
+ s.onerror=()=>{r(null);s.remove()};document.head.appendChild(s)})}
+async function dlTest(){
+ let tot=0,tm=0;
+ for(let i=0;i<3;i++){const r=await loadScript();if(r&&r.t>0){tot+=r.b;tm+=r.t}}
+ if(tot){used+=tot;return tot/tm/1e6}
+ const c=navigator.connection;return c&&c.downlink?c.downlink/8:0;
+}
+async function ulTest(){
+ const body=new Uint8Array(400000);let tot=0,tm=0;
+ for(let i=0;i<3;i++){const t=performance.now();
+  try{await fetch(location.pathname+"?u="+Math.random(),{method:"POST",body,cache:"no-store"})}catch(e){}
+  const s=(performance.now()-t)/1000;if(s>0.03){tot+=body.length;tm+=s}}
+ used+=tot;return tm?tot/tm/1e6:down*.4;
+}
+async function run(){
+ if(busy)return;busy=true;
+ try{
+  $("go").textContent="Testing latency…";await ping(8);if(off)return;
+  $("go").textContent="Testing download…";down=await dlTest();if(!down){await ping(3);if(off)return}tw("dl",down,"<small> MB/s</small>");$("dlm").textContent="≈ "+(down*8).toFixed(1)+" Mbps";
+  $("go").textContent="Testing upload…";up=await ulTest();tw("ul",up,"<small> MB/s</small>");$("ulm").textContent="≈ "+(up*8).toFixed(1)+" Mbps";
+  quality();const s=score();calc();peakD=Math.max(peakD,down);peakU=Math.max(peakU,up);info();
+ if(down>0){const l=sp[sp.length-1];sp.push({t:performance.now(),d:down,u:up,d0:l?l.d:down,u0:l?l.u:up});tw("sgd",down,"");tw("sgu",up,"")}
+  hist.unshift({t:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),d:+down.toFixed(2),u:+up.toFixed(2),p:Math.round(pings.slice(-8).reduce((a,b)=>a+b,0)/Math.max(1,Math.min(8,pings.length))),s});
+  hist=hist.slice(0,10);try{localStorage.setItem("nm_h",JSON.stringify(hist))}catch(e){}
+  drawHist();
+ }finally{busy=false;label();if(auto&&!off)timer=setTimeout(run,8000)}
+}
+function calc(){
+ const mb=(+$("sz").value||0)*(+$("un").value);
+ if(!down||!mb){$("et").textContent="--";return}
+ const s=mb/down;$("et").textContent=s<60?s.toFixed(1)+" sec":s<3600?Math.floor(s/60)+" min "+Math.round(s%60)+" sec":(s/3600).toFixed(1)+" hr";
+}
+function drawHist(){
+ $("hist").innerHTML=hist.length?"<tr><td class='lbl'>Time</td><td class='lbl'>↓ MB/s</td><td class='lbl'>↑ MB/s</td><td class='lbl'>Ping</td><td class='lbl'>Score</td></tr>"+hist.map(h=>`<tr><td style="text-align:left">${h.t}</td><td>${h.d}</td><td>${h.u}</td><td>${h.p}</td><td style="color:${col(h.s)};font-weight:700">${h.s}</td></tr>`).join(""):"<tr><td>No tests yet</td></tr>";
+}
+function gen(){if(off||!down)return null;const c=navigator.connection||{},m=down*8;if(c.type==="wifi")return["Wi‑Fi","Wi‑Fi"];return m>=100?["5G","5G"]:m>=5?["4G","4G / LTE"]:m>=.4?["3G","3G"]:["E","E (EDGE)"]}
+function info(){
+ const c=navigator.connection||{},on=navigator.onLine&&!off;
+ $("sd").style.background=on?"var(--g)":"var(--r)";$("stt").textContent=on?"Online":"Offline";
+ const _old=[["Status",on?"Online":"Offline"],["Connection type",c.type||"n/a"],["Effective type",c.effectiveType||"n/a"],["Browser-reported speed",c.downlink?(c.downlink/8).toFixed(2)+" MB/s":"n/a"],["Browser-reported RTT",c.rtt!=null?c.rtt+" ms":"n/a"],["Data saver",c.saveData?"On":"Off"],["Stability",jit<15&&loss<2?"Stable":jit<40&&loss<8?"Fair":"Unstable"]];
+ const gv=gen(),ge=$("gen");
+ if(gv){const n={E:1,"3G":2,"4G":3}[gv[0]]||4;let b="";for(let i=0;i<4;i++){const h=3+i*2.3;b+=`<rect x="${i*3}" y="${10-h}" width="2" height="${h}" rx=".6" opacity="${i<n?1:.3}"/>`}ge.innerHTML=`<svg width="11" height="10" viewBox="0 0 11 10" fill="currentColor">${b}</svg>${gv[0]}`;ge.style.display="inline-flex"}else ge.style.display="none";
+ const a=pings.length?pings.reduce((x,y)=>x+y,0)/pings.length:0,mn=pings.length?Math.min(...pings):0,mx=pings.length?Math.max(...pings):0;
+ const fmt=s=>s<60?Math.floor(s)+"s":s<3600?Math.floor(s/60)+"m "+Math.floor(s%60)+"s":Math.floor(s/3600)+"h "+Math.floor(s%3600/60)+"m";
+ const g=(ok,mid)=>ok?["Good","var(--g)"]:mid?["OK","var(--y)"]:["Poor","var(--r)"],dm=down*8;
+ const uses=off||!down?[]:[["Browsing & social",g(dm>=1.5,dm>=.5)],["HD streaming",g(dm>=8,dm>=2.5)],["Video calls",g(a<100&&jit<25&&loss<2&&dm>=3,a<200&&jit<50&&loss<5&&dm>=1.5)],["Online gaming",g(a<50&&jit<15&&loss<1,a<100&&jit<30&&loss<3)]];
+ const R=[["Status",on?"Online":"Offline"],["Estimated network",gv?gv[1]+" (from speed)":"--"],["Monitoring time",fmt((Date.now()-t0)/1000)],["Connection drops",drops?drops+" (last at "+lastDrop+")":"None"],["Ping min · avg · max",pings.length?`${Math.round(mn)} · ${Math.round(a)} · ${Math.round(mx)} ms`:"--"],["Peak download",peakD?mbs(peakD)+" MB/s":"--"],["Peak upload",peakU?mbs(peakU)+" MB/s":"--"],["Data used by tests",(used/1e6).toFixed(1)+" MB"],["Stability",!pings.length?"--":jit<15&&loss<2?"Stable":jit<40&&loss<8?"Fair":"Unstable"]];
+ if(pings.length){const k=(el,v,x,y)=>el.style.color=v<x?"var(--g)":v<y?"var(--y)":"var(--r)";k($("pg"),a,60,120);k($("jt"),jit,15,40);k($("ls"),loss,1,5)}
+ if(c.effectiveType)R.push(["Network type",c.effectiveType]);
+ if(c.saveData)R.push(["Data saver","On"]);
+ $("info").innerHTML=R.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")+(uses.length?"<tr><td colspan='2' class='lbl' style='padding-top:10px'>What your connection is good for</td></tr>"+uses.map(u=>`<tr><td>${u[0]}</td><td style="color:${u[1][1]};font-weight:600">${u[1][0]}</td></tr>`).join(""):"");
+}
+function label(){$("go").textContent=off?"↻ Retry connection":auto?"⏸ Pause live monitoring":"▶ Resume live monitoring"}
+function goOffline(){if(off)return;off=true;drops++;lastDrop=new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});clearTimeout(timer);down=up=0;pings=[];jit=0;loss=0;
+$("cov").textContent="OFF";$("cov").style.color="var(--r)";$("cov").style.setProperty("--p",100);$("cov").style.setProperty("--c","var(--r)");$("covb").style.width="0";
+$("covt").style.color="var(--r)";$("covd").textContent="Tests are paused. Monitoring resumes automatically when the network returns.";document.querySelectorAll(".scale span").forEach((e,i)=>e.classList.toggle("on",i===0));[0,1,2].forEach(i=>{$("f"+i).style.width="0";$("g"+i).textContent="--"});$("covt").textContent="No connection since "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+". Paused until the network returns.";
+$("dl")._v=0;$("ul")._v=0;$("pg")._v=null;$("cov")._v=null;["dl","ul","cov"].forEach(i=>cancelAnimationFrame($(i)._r));$("dl").innerHTML="0.00<small> MB/s</small>";$("ul").innerHTML="0.00<small> MB/s</small>";$("dlm").textContent="";$("ulm").textContent="";$("pg").textContent="--";graph();quality();info();label()}
+function goOnline(){if(!off)return;off=false;fails=0;$("covt").style.color="";info();label();run()}
+$("go").onclick=()=>{if(off){off=false;fails=0;auto=true;$("covt").style.color="";info();label();run();return}auto=!auto;clearTimeout(timer);label();if(auto)run()};$("sz").oninput=$("un").onchange=calc;
+$("cl").onclick=()=>{hist=[];try{localStorage.removeItem("nm_h")}catch(e){}drawHist()};
+$("cp").onclick=()=>{const t=`Network report: ↓ ${mbs(down)} MB/s, ↑ ${mbs(up)} MB/s, ping ${$("pg").textContent} ms, jitter ${$("jt").textContent} ms, loss ${$("ls").textContent}%, coverage ${$("cov").textContent}, best streaming ${$("vq").textContent}`;
+ try{navigator.clipboard.writeText(t);$("cp").textContent="Copied ✓"}catch(e){$("cp").textContent="Copy failed"}setTimeout(()=>$("cp").textContent="Copy report",1500)};
+addEventListener("online",goOnline);addEventListener("offline",goOffline);
+setInterval(()=>{if(!off){ping(1).then(info)}},1000);
+let series=[],ymax=100,gb=false;const W=300,H=90,WIN=45000;
+function tw(id,to,sfx,dec){const el=$(id),from=el._v!=null?el._v:to,s0=performance.now(),f=dec==null?mbs:v=>v.toFixed(dec);el._v=to;cancelAnimationFrame(el._r);
+ const step=n=>{const k=Math.min(1,(n-s0)/700),e=1-Math.pow(1-k,3);el.innerHTML=f(from+(to-from)*e)+(sfx||"");if(k<1)el._r=requestAnimationFrame(step)};step(s0)}
+function graph(){if(off){series.length=0;sp.length=0;$("sgd").textContent=$("sgu").textContent="--";$("sgd")._v=$("sgu")._v=null}}
+function frame(){return;const gr=$("gr");
+ if(!gb){gr.innerHTML=`<defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ac);stop-opacity:.35"/><stop offset="1" style="stop-color:var(--ac);stop-opacity:0"/></linearGradient></defs><path id="ga" fill="url(#lg)"/><path id="gl" fill="none" stroke="var(--ac)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;gb=true}
+ const rt=performance.now()-1100,ga=$("ga"),gl=$("gl");
+ series=series.filter(p=>rt-p.t<WIN+3000);
+ if(series.length<2){ga.setAttribute("d","");gl.setAttribute("d","");return}
+ let mx=80;for(const p of series)if(p.v>mx)mx=p.v;ymax+=(mx*1.2-ymax)*.05;
+ const X=p=>W-(rt-p.t)/WIN*W,Y=v=>H-8-Math.min(v,ymax)/ymax*(H-16);
+ let d=`M${X(series[0]).toFixed(1)},${Y(series[0].v).toFixed(1)}`;
+ for(let i=1;i<series.length;i++){const a=series[i-1],b=series[i],c=((X(a)+X(b))/2).toFixed(1);d+=`C${c},${Y(a.v).toFixed(1)} ${c},${Y(b.v).toFixed(1)} ${X(b).toFixed(1)},${Y(b.v).toFixed(1)}`}
+ gl.setAttribute("d",d);ga.setAttribute("d",d+`L${X(series[series.length-1]).toFixed(1)},${H}L${X(series[0]).toFixed(1)},${H}Z`)}
+let sp=[],ymax2=2,gb2=false,lastm="";const WIN2=120000;
+function frame2(){requestAnimationFrame(frame2);const g=$("sg");
+ if(!gb2){g.innerHTML=`<defs><linearGradient id="sa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ac);stop-opacity:.28"/><stop offset="1" style="stop-color:var(--ac);stop-opacity:0"/></linearGradient></defs><path id="sda" fill="url(#sa)"/><path id="sdl" fill="none" stroke="var(--ac)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><path id="sul" fill="none" stroke="var(--ac2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;gb2=true}
+ const now=performance.now();sp=sp.filter(p=>now-p.t<WIN2+30000);
+ if(!sp.length){["sda","sdl","sul"].forEach(i=>$(i).setAttribute("d",""));if(lastm){$("sgm").textContent="--";lastm=""}return}
+ let mx=1;for(const p of sp)mx=Math.max(mx,p.d,p.u);ymax2+=(mx*1.25-ymax2)*.05;
+ const X=p=>W-(now-p.t)/WIN2*W,Y=v=>102-Math.min(v,ymax2)/ymax2*92,ez=k=>1-Math.pow(1-k,3);
+ const val=(p,k)=>p[k+"0"]+(p[k]-p[k+"0"])*ez(Math.min(1,(now-p.t)/900));
+ const line=k=>{let d="";sp.forEach((p,i)=>{const x=X(p),y=Y(val(p,k));if(!i)d=`M${x.toFixed(1)},${y.toFixed(1)}`;else{const a=sp[i-1],c=((X(a)+x)/2).toFixed(1);d+=`C${c},${Y(val(a,k)).toFixed(1)} ${c},${y.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`}});return d+`L${W},${Y(val(sp[sp.length-1],k)).toFixed(1)}`};
+ const dd=line("d");$("sdl").setAttribute("d",dd);$("sul").setAttribute("d",line("u"));
+ $("sda").setAttribute("d",dd+`L${W},110L${X(sp[0]).toFixed(1)},110Z`);
+ const m="max "+(Math.ceil(mx*1.25*10)/10).toFixed(1)+" MB/s";if(m!==lastm){$("sgm").textContent=m;lastm=m}}
+requestAnimationFrame(frame2);
+requestAnimationFrame(frame);
+quality();drawHist();info();calc();run();
+</script></body></html>
